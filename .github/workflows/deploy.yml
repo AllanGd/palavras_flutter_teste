@@ -1,0 +1,35 @@
+# Nome do seu workflow
+name: Deploy Flutter Web to GitHub Pages
+
+# Gatilho: Este workflow será executado sempre que houver um push na branch 'main'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Faz o checkout do seu repositório
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      # 3. Faz o build da aplicação web com o base-href correto
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href /palavras_flutter_teste/
+
+      # 4. Faz o deploy para a branch gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+
